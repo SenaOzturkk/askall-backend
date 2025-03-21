@@ -1,36 +1,80 @@
 package com.askall.modal;
 
 import jakarta.persistence.*;
-
 import java.time.LocalDateTime;
+import java.util.UUID;
+
 @Entity
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long userId;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "user_id", nullable = false, updatable = false)
+    private UUID userId;
+
+    @Column(name = "username", nullable = false, unique = true)
     private String username;
+
+    @Column(name = "email", nullable = false, unique = true)
     private String email;
+
+    @Column(name = "password_hash", nullable = false)
     private String passwordHash;
+
+    @Column(name = "profile_picture")
     private String profilePicture;
+
+    @Column(name = "bio")
     private String bio;
-    private LocalDateTime createdAt;
-    private Boolean isPremium;
+
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt = LocalDateTime.now();
+
+    @Column(name = "is_premium", nullable = false)
+    private Boolean isPremium = false;
+
+    @Column(name = "last_active")
     private LocalDateTime lastActive;
 
-    public Double getLocationLatitude() {
-        return locationLatitude;
-    }
+    @Column(name = "location_latitude")
+    private Double locationLatitude;
 
-    public void setLocationLatitude(Double locationLatitude) {
-        this.locationLatitude = locationLatitude;
-    }
+    @Column(name = "location_longitude")
+    private Double locationLongitude;
 
-    public Long getUserId() {
+    @Column(name = "is_profile_private", nullable = false)
+    private Boolean isProfilePrivate = false;
+
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    @Column(name = "is_account_suspended", nullable = false)
+    private Boolean isAccountSuspended = false;
+
+    @Column(name = "is_account_frozen", nullable = false)
+    private Boolean isAccountFrozen = false;
+
+    @Column(name = "phone", unique = true)
+    private String phone;
+
+    @Column(name = "is_phone_verified", nullable = false)
+    private Boolean isPhoneVerified = false;
+
+    @Column(name = "phone_verification_code")
+    private String phoneVerificationCode;
+
+    @Column(name = "phone_verification_code_sent_at")
+    private LocalDateTime phoneVerificationCodeSentAt;
+
+    @Column(name = "is_phone_verified_for_2fa", nullable = false)
+    private Boolean isPhoneVerifiedFor2FA = false;
+
+    // Getters and Setters
+    public UUID getUserId() {
         return userId;
     }
 
-    public void setUserId(Long userId) {
+    public void setUserId(UUID userId) {
         this.userId = userId;
     }
 
@@ -98,6 +142,14 @@ public class User {
         this.lastActive = lastActive;
     }
 
+    public Double getLocationLatitude() {
+        return locationLatitude;
+    }
+
+    public void setLocationLatitude(Double locationLatitude) {
+        this.locationLatitude = locationLatitude;
+    }
+
     public Double getLocationLongitude() {
         return locationLongitude;
     }
@@ -138,20 +190,43 @@ public class User {
         isAccountFrozen = accountFrozen;
     }
 
-    public String getUuid() {
-        return uuid;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
-    private Double locationLatitude;
-    private Double locationLongitude;
-    private Boolean isProfilePrivate;
-    private Boolean isDeleted;
-    private Boolean isAccountSuspended;
-    private Boolean isAccountFrozen;
-    private String uuid;
-    // Getters and setters
+    public Boolean getIsPhoneVerified() {
+        return isPhoneVerified;
+    }
+
+    public void setIsPhoneVerified(Boolean isPhoneVerified) {
+        this.isPhoneVerified = isPhoneVerified;
+    }
+
+    public String getPhoneVerificationCode() {
+        return phoneVerificationCode;
+    }
+
+    public void setPhoneVerificationCode(String phoneVerificationCode) {
+        this.phoneVerificationCode = phoneVerificationCode;
+    }
+
+    public LocalDateTime getPhoneVerificationCodeSentAt() {
+        return phoneVerificationCodeSentAt;
+    }
+
+    public void setPhoneVerificationCodeSentAt(LocalDateTime phoneVerificationCodeSentAt) {
+        this.phoneVerificationCodeSentAt = phoneVerificationCodeSentAt;
+    }
+
+    public Boolean getIsPhoneVerifiedFor2FA() {
+        return isPhoneVerifiedFor2FA;
+    }
+
+    public void setIsPhoneVerifiedFor2FA(Boolean isPhoneVerifiedFor2FA) {
+        this.isPhoneVerifiedFor2FA = isPhoneVerifiedFor2FA;
+    }
 }
