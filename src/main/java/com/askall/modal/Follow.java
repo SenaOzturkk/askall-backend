@@ -22,4 +22,29 @@ public class Follow {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt = Instant.now();
+
+    // 🟢 **Getter ve Setter Metotları**
+    public UUID getId() {
+        return id;
+    }
+
+    public UUID getFollowerId() {
+        return followerId;
+    }
+
+    public void setFollowerId(UUID followerId) {
+        this.followerId = followerId;
+    }
+
+    public UUID getFollowingId() {
+        return followingId;
+    }
+
+    public void setFollowingId(UUID followingId) {
+        this.followingId = followingId;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

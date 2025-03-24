@@ -21,4 +21,37 @@ public class Conversation {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt = Instant.now();
+
+    // 🟢 Getter ve Setter metodlarını ekledik
+    public UUID getConversationId() {
+        return conversationId;
+    }
+
+    public void setConversationId(UUID conversationId) {
+        this.conversationId = conversationId;
+    }
+
+    public UUID getUser1Id() {
+        return user1Id;
+    }
+
+    public void setUser1Id(UUID user1Id) {
+        this.user1Id = user1Id;
+    }
+
+    public UUID getUser2Id() {
+        return user2Id;
+    }
+
+    public void setUser2Id(UUID user2Id) {
+        this.user2Id = user2Id;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
 }

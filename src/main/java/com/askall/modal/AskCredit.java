@@ -1,10 +1,16 @@
 package com.askall.modal;
 
 import jakarta.persistence.*;
+import lombok.*;
+
 import java.util.UUID;
 
 @Entity
 @Table(name = "ask_credits")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
 public class AskCredit {
 
     @Id
