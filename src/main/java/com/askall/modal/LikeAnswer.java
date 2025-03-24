@@ -21,4 +21,29 @@ public class LikeAnswer {
 
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt = Instant.now();
+
+    // 🟢 Getter & Setter Metotları
+    public UUID getLikeId() {
+        return likeId;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public UUID getAnswerId() {
+        return answerId;
+    }
+
+    public void setAnswerId(UUID answerId) {
+        this.answerId = answerId;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
 }

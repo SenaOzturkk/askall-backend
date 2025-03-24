@@ -35,4 +35,61 @@ public class Report {
     public enum EntityType {
         QUESTION, ANSWER, COMMENT, MESSAGE, PROFILE
     }
+
+    // Getter ve Setter metotları
+    public UUID getReportId() {
+        return reportId;
+    }
+
+    public void setReportId(UUID reportId) {
+        this.reportId = reportId;
+    }
+
+    public UUID getReporterId() {
+        return reporterId;
+    }
+
+    public void setReporterId(UUID reporterId) {
+        this.reporterId = reporterId;
+    }
+
+    public UUID getReportedUserId() {
+        return reportedUserId;
+    }
+
+    public void setReportedUserId(UUID reportedUserId) {
+        this.reportedUserId = reportedUserId;
+    }
+
+    public UUID getEntityId() {
+        return entityId;
+    }
+
+    public void setEntityId(UUID entityId) {
+        this.entityId = entityId;
+    }
+
+    public EntityType getEntityType() {
+        return entityType;
+    }
+
+    public void setEntityType(EntityType entityType) {
+        this.entityType = entityType;
+    }
+
+    public String getReason() {
+        return reason;
+    }
+
+    public void setReason(String reason) {
+        this.reason = reason;
+    }
+
+    public Instant getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(Instant createdAt) {
+        this.createdAt = createdAt;
+    }
 }

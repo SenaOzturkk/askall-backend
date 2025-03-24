@@ -31,4 +31,61 @@ public class PremiumPurchase {
 
     @Column(name = "purchase_type", nullable = false, length = 50)
     private String purchaseType;
+
+    // Getter ve Setter metotları
+    public UUID getPurchaseId() {
+        return purchaseId;
+    }
+
+    public void setPurchaseId(UUID purchaseId) {
+        this.purchaseId = purchaseId;
+    }
+
+    public UUID getUserId() {
+        return userId;
+    }
+
+    public void setUserId(UUID userId) {
+        this.userId = userId;
+    }
+
+    public Instant getPurchaseDate() {
+        return purchaseDate;
+    }
+
+    public void setPurchaseDate(Instant purchaseDate) {
+        this.purchaseDate = purchaseDate;
+    }
+
+    public Instant getExpirationDate() {
+        return expirationDate;
+    }
+
+    public void setExpirationDate(Instant expirationDate) {
+        this.expirationDate = expirationDate;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(BigDecimal amount) {
+        this.amount = amount;
+    }
+
+    public String getPaymentMethod() {
+        return paymentMethod;
+    }
+
+    public void setPaymentMethod(String paymentMethod) {
+        this.paymentMethod = paymentMethod;
+    }
+
+    public String getPurchaseType() {
+        return purchaseType;
+    }
+
+    public void setPurchaseType(String purchaseType) {
+        this.purchaseType = purchaseType;
+    }
 }
