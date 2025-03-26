@@ -16,16 +16,16 @@ public class AskCreditController {
     public AskCreditController(AskCreditService askCreditService) {
         this.askCreditService = askCreditService;
     }
-
+/*
     @GetMapping("/{userId}")
     public ResponseEntity<AskCredit> getUserCredits(@PathVariable UUID userId) {
         AskCredit askCredit = askCreditService.getCreditsByUserId(userId);
         return ResponseEntity.ok(askCredit);
-    }
-
+    }*/
+/*
     @PostMapping("/{userId}/add")
     public ResponseEntity<AskCredit> addCredits(@PathVariable UUID userId, @RequestParam int amount) {
         AskCredit updatedCredit = askCreditService.updateCredits(userId, amount);
         return ResponseEntity.ok(updatedCredit);
-    }
+    }*/
 }
