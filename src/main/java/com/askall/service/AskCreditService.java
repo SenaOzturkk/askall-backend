@@ -15,12 +15,12 @@ public class AskCreditService {
     public AskCreditService(AskCreditRepository askCreditRepository) {
         this.askCreditRepository = askCreditRepository;
     }
-
+/*
     public AskCredit getCreditsByUserId(UUID userId) {
         return askCreditRepository.findByUserId(userId)
                 .orElseGet(() -> new AskCredit(userId, 0)); // Kullanıcı bulunamazsa 0 kredi ile yeni bir nesne döndür.
-    }
-
+    }*/
+/*
     public AskCredit updateCredits(UUID userId, int amount) {
         AskCredit askCredit = askCreditRepository.findByUserId(userId)
                 .orElseGet(() -> new AskCredit(userId, 0));
@@ -28,4 +28,6 @@ public class AskCreditService {
         askCredit.setCredits(askCredit.getCredits() + amount);
         return askCreditRepository.save(askCredit);
     }
+
+    */
 }
