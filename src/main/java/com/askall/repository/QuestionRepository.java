@@ -10,16 +10,13 @@ import java.util.UUID;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, UUID> {
-
-    // Kullanıcının tüm sorularını getir
     List<Question> findByUserId(UUID userId);
 
-    // Kullanıcının belirli bir sorusunu getir
     Question findByUserIdAndQuestionId(UUID userId, UUID questionId);
 
-    // Görünürlüğe göre soruları getir
     List<Question> findByVisibility(Question.Visibility visibility);
 
-    // Bitiş tarihi geçmiş soruları getir
     List<Question> findByExpiresAtBeforeAndVisibility(Instant expiresAt, Question.Visibility visibility);
+
+    List<Question> findByUserIdAndIsDeletedFalse(UUID userId);
 }

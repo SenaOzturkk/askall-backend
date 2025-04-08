@@ -1,11 +1,15 @@
 package com.askall.controller;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.BlockedUser;
+import com.askall.modal.Question;
 import com.askall.service.BlockedUserService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -18,27 +22,31 @@ public class BlockedUserController {
         this.blockedUserService = blockedUserService;
     }
 
-    @PostMapping("/block")
-    public ResponseEntity<BlockedUser> blockUser(@RequestParam UUID blockerId, @RequestParam UUID blockedId) {
-        BlockedUser blockedUser = blockedUserService.blockUser(blockerId, blockedId);
-        return ResponseEntity.ok(blockedUser);
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> blockUser(@RequestParam UUID blockerId, @RequestParam UUID blockedId) {
+        ApiResponse<Object> blockedUser =  blockedUserService.blockUser(blockerId, blockedId);
+        return ResponseEntity.status(blockedUser.getStatus()).body(blockedUser);
     }
 
     @GetMapping("/{blockerId}")
-    public ResponseEntity<List<BlockedUser>> getBlockedUsers(@PathVariable UUID blockerId) {
-        List<BlockedUser> blockedUsers = blockedUserService.getBlockedUsers(blockerId);
-        return ResponseEntity.ok(blockedUsers);
+    public ResponseEntity<ApiResponse<Object>> getBlockedUsers(@PathVariable UUID blockerId) {
+        ApiResponse<Object> blockedUsers = blockedUserService.getBlockedUsers(blockerId);
+        return ResponseEntity.status(blockedUsers.getStatus()).body(blockedUsers);
     }
 
-    @GetMapping("/is-blocked")
-    public ResponseEntity<Boolean> isUserBlocked(@RequestParam UUID blockerId, @RequestParam UUID blockedId) {
-        boolean isBlocked = blockedUserService.isUserBlocked(blockerId, blockedId);
-        return ResponseEntity.ok(isBlocked);
+    @DeleteMapping
+    public ResponseEntity<ApiResponse<Object>> unblockUser(@RequestParam UUID blockerId, @RequestParam UUID blockedId) {
+        Optional<BlockedUser> deletedBlockedUser = blockedUserService.unblockUser(blockerId, blockedId);
+
+        if (deletedBlockedUser.isPresent()) {
+            return ResponseEntity.ok(
+                    ApiResponse.success(HttpStatus.OK, "Unblock successfully", deletedBlockedUser.get())
+            );
+        } else {
+            return ResponseEntity.ok(
+                    ApiResponse.success(HttpStatus.OK, "Unblock not found", deletedBlockedUser)
+            );
+        }
     }
 
-    @DeleteMapping("/unblock")
-    public ResponseEntity<Void> unblockUser(@RequestParam UUID blockerId, @RequestParam UUID blockedId) {
-        blockedUserService.unblockUser(blockerId, blockedId);
-        return ResponseEntity.noContent().build();
-    }
 }

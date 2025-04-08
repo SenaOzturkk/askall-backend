@@ -1,8 +1,11 @@
 package com.askall.service;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.Answer;
 
+import com.askall.modal.Question;
 import com.askall.repository.AnswerRepository;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -18,12 +21,10 @@ public class AnswerService {
         this.answerRepository = answerRepository;
     }
 
-    // Tüm cevapları getir (sadece silinmemişleri)
     public List<Answer> getAllAnswers() {
         return answerRepository.findByIsDeletedFalse();
     }
 
-    // Belirli bir ID'ye göre cevabı getir
     public Optional<Answer> getAnswerById(UUID answerId) {
         return answerRepository.findById(answerId);
     }
@@ -34,8 +35,9 @@ public class AnswerService {
     }
 
     // Yeni bir cevap oluştur
-    public Answer createAnswer(Answer answer) {
-        return answerRepository.save(answer);
+    public ApiResponse<Object> createAnswer(Answer answer) {
+        Answer savedAnswer = answerRepository.save(answer);
+        return ApiResponse.success(HttpStatus.OK, "Answer created successfully", savedAnswer);
     }
 
     // Cevabı güncelle
@@ -47,10 +49,9 @@ public class AnswerService {
     }
 
     // Cevabı sil (Soft Delete)
-    public void deleteAnswer(UUID answerId) {
-        answerRepository.findById(answerId).ifPresent(answer -> {
-            answer.setIsDeleted(true);
-            answerRepository.save(answer);
-        });
+    public Optional<Answer> deleteAnswer(UUID answerId) {
+        Optional<Answer> answer = answerRepository.findById(answerId);
+        answer.ifPresent(answerRepository::delete);
+        return answer;
     }
 }

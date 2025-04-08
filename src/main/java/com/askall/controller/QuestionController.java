@@ -1,16 +1,20 @@
 package com.askall.controller;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.Question;
+import com.askall.modal.User;
 import com.askall.service.QuestionService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/questions")
+@RequestMapping("api/questions")
 public class QuestionController {
 
     private final QuestionService questionService;
@@ -19,46 +23,55 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    // Yeni bir soru oluştur
-    @PostMapping("/create")
-    public ResponseEntity<Question> createQuestion(@RequestParam UUID userId,
-                                                   @RequestParam String questionText,
-                                                   @RequestParam String questionImage,
-                                                   @RequestParam Double latitude,
-                                                   @RequestParam Double longitude,
-                                                   @RequestParam Question.Visibility visibility,
-                                                   @RequestParam Instant expiresAt,
-                                                   @RequestParam Double radius) {
-        Question question = questionService.createQuestion(userId, questionText, questionImage, latitude, longitude, visibility, expiresAt, radius);
-        return ResponseEntity.ok(question);
+    @GetMapping
+    public ResponseEntity<ApiResponse<Object>> getAllQuestions() {
+        List<Question> questions = questionService.getAllQuestions();
+        ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Question List successfully", questions);
+        return ResponseEntity.ok(response);
     }
 
-    // Kullanıcının tüm sorularını listele
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> createQuestion(@RequestBody  Question question) {
+        ApiResponse<Object>  savedQuestion = questionService.createQuestion(question);
+        return ResponseEntity.status(savedQuestion.getStatus()).body(savedQuestion);
+    }
+
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Question>> getQuestions(@PathVariable UUID userId) {
-        List<Question> questions = questionService.getQuestionsByUser(userId);
-        return ResponseEntity.ok(questions);
+    public ResponseEntity<ApiResponse<List<Question>>> getQuestionsByUser(@PathVariable UUID userId) {
+        ApiResponse<List<Question>> response = questionService.getQuestionsByUser(userId);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
-    // Kullanıcının belirli bir sorusunu getir
     @GetMapping("/{userId}/{questionId}")
     public ResponseEntity<Question> getQuestion(@PathVariable UUID userId, @PathVariable UUID questionId) {
         Question question = questionService.getQuestion(userId, questionId);
         return ResponseEntity.ok(question);
     }
 
-    // Görünürlüğe göre soruları listele
     @GetMapping("/visibility/{visibility}")
-    public ResponseEntity<List<Question>> getQuestionsByVisibility(@PathVariable Question.Visibility visibility) {
+    public ResponseEntity<ApiResponse<Object>>  getQuestionsByVisibility(@PathVariable Question.Visibility visibility) {
         List<Question> questions = questionService.getQuestionsByVisibility(visibility);
-        return ResponseEntity.ok(questions);
+        ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Question visibility list successfully", questions);
+        return ResponseEntity.ok(response);
     }
 
-    // Geçerliliği bitmiş soruları getir
     @GetMapping("/expired/{visibility}")
-    public ResponseEntity<List<Question>> getExpiredQuestions(@PathVariable Question.Visibility visibility) {
+    public ResponseEntity<ApiResponse<Object>> getExpiredQuestions(@PathVariable Question.Visibility visibility) {
         Instant now = Instant.now();
         List<Question> expiredQuestions = questionService.getExpiredQuestions(now, visibility);
-        return ResponseEntity.ok(expiredQuestions);
+        ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Question expired list successfully", expiredQuestions);
+        return ResponseEntity.ok(response);
+    }
+
+    @DeleteMapping("/{questionId}")
+    public ResponseEntity<ApiResponse<Object>>  deleteQuestion(@PathVariable UUID questionId) {
+        Optional<Question> deletedQuestion = questionService.deleteQuestion(questionId);
+        try {
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Question deleted successfully", deletedQuestion.get());
+            return ResponseEntity.ok(response);
+        } catch (RuntimeException e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.OK, "Question not found: " + questionId);
+            return ResponseEntity.ok(response);
+        }
     }
 }
