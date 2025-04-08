@@ -41,6 +41,17 @@ public class Question {
     @Column(name = "radius")
     private Double radius;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
+    }
+
     public enum Visibility {
         FOLLOWERS, FOLLOWING, PUBLIC
     }

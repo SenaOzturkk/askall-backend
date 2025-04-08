@@ -23,6 +23,9 @@ public class Follow {
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     // 🟢 **Getter ve Setter Metotları**
     public UUID getId() {
         return id;
@@ -46,5 +49,13 @@ public class Follow {
 
     public Instant getCreatedAt() {
         return createdAt;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
     }
 }

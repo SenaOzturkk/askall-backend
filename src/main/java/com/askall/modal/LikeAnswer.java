@@ -22,6 +22,9 @@ public class LikeAnswer {
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     // 🟢 Getter & Setter Metotları
     public UUID getLikeId() {
         return likeId;
@@ -46,4 +49,13 @@ public class LikeAnswer {
     public Instant getCreatedAt() {
         return createdAt;
     }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
 }
