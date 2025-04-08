@@ -81,8 +81,6 @@ public class BlockedUser {
         this.createdAt = Instant.now();
     }
 
-    public BlockedUser() {
-    }
 
     public Instant getUnblockedAt() {
         return unblockedAt;
