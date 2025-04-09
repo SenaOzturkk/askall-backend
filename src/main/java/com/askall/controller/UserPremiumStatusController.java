@@ -1,8 +1,10 @@
 package com.askall.controller;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.UserPremiumStatus;
 import com.askall.service.UserPremiumStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,35 +20,63 @@ public class UserPremiumStatusController {
 
     // Kullanıcı ID'sine göre premium durumu al
     @GetMapping("/user/{userId}")
-    public ResponseEntity<UserPremiumStatus> getUserPremiumStatus(@PathVariable UUID userId) {
-        Optional<UserPremiumStatus> status = userPremiumStatusService.getUserPremiumStatus(userId);
-        if (status.isPresent()) {
-            return ResponseEntity.ok(status.get());
+    public ResponseEntity<ApiResponse<Object>> getUserPremiumStatus(@PathVariable UUID userId) {
+        try {
+            Optional<UserPremiumStatus> status = userPremiumStatusService.getUserPremiumStatus(userId);
+            if (status.isPresent()) {
+                ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Kullanıcının premium durumu başarıyla getirildi", status.get());
+                return ResponseEntity.ok(response);
+            } else {
+                ApiResponse<Object> response = ApiResponse.error(HttpStatus.NOT_FOUND, "Kullanıcının premium durumu bulunamadı");
+                return ResponseEntity.ok(response);
+            }
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Premium durumu getirilirken hata oluştu");
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.notFound().build();
     }
 
     // Yeni bir premium durumu kaydet
     @PostMapping("/save")
-    public ResponseEntity<UserPremiumStatus> saveUserPremiumStatus(@RequestBody UserPremiumStatus userPremiumStatus) {
-        UserPremiumStatus savedStatus = userPremiumStatusService.saveUserPremiumStatus(userPremiumStatus);
-        return ResponseEntity.ok(savedStatus);
+    public ResponseEntity<ApiResponse<Object>> saveUserPremiumStatus(@RequestBody UserPremiumStatus userPremiumStatus) {
+        try {
+            UserPremiumStatus savedStatus = userPremiumStatusService.saveUserPremiumStatus(userPremiumStatus);
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Premium durumu başarıyla kaydedildi", savedStatus);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Premium durumu kaydedilirken hata oluştu");
+            return ResponseEntity.ok(response);
+        }
     }
 
     // Kullanıcı ID'sine göre premium durumu güncelle
     @PutMapping("/update/{userId}")
-    public ResponseEntity<UserPremiumStatus> updateUserPremiumStatus(@PathVariable UUID userId, @RequestBody UserPremiumStatus userPremiumStatus) {
-        UserPremiumStatus updatedStatus = userPremiumStatusService.updateUserPremiumStatus(userId, userPremiumStatus);
-        if (updatedStatus != null) {
-            return ResponseEntity.ok(updatedStatus);
+    public ResponseEntity<ApiResponse<Object>> updateUserPremiumStatus(@PathVariable UUID userId, @RequestBody UserPremiumStatus userPremiumStatus) {
+        try {
+            UserPremiumStatus updatedStatus = userPremiumStatusService.updateUserPremiumStatus(userId, userPremiumStatus);
+            if (updatedStatus != null) {
+                ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Premium durumu başarıyla güncellendi", updatedStatus);
+                return ResponseEntity.ok(response);
+            } else {
+                ApiResponse<Object> response = ApiResponse.error(HttpStatus.NOT_FOUND, "Güncellenecek kullanıcı premium durumu bulunamadı");
+                return ResponseEntity.ok(response);
+            }
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Premium durumu güncellenirken hata oluştu");
+            return ResponseEntity.ok(response);
         }
-        return ResponseEntity.notFound().build();
     }
 
     // Kullanıcı premium durumunu sil
     @DeleteMapping("/delete/{userId}")
-    public ResponseEntity<Void> deleteUserPremiumStatus(@PathVariable UUID userId) {
-        userPremiumStatusService.deleteUserPremiumStatus(userId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Object>> deleteUserPremiumStatus(@PathVariable UUID userId) {
+        try {
+            userPremiumStatusService.deleteUserPremiumStatus(userId);
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Premium durumu başarıyla silindi", null);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Premium durumu silinirken hata oluştu");
+            return ResponseEntity.ok(response);
+        }
     }
 }

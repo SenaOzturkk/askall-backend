@@ -1,7 +1,9 @@
 package com.askall.controller;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.Message;
 import com.askall.service.MessageService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/messages")
+@RequestMapping("/api/messages")
 public class MessageController {
 
     private final MessageService messageService;
@@ -20,50 +22,80 @@ public class MessageController {
 
     // Mesaj gönderme
     @PostMapping("/{conversationId}/{senderId}")
-    public ResponseEntity<Message> sendMessage(@PathVariable UUID conversationId, @PathVariable UUID senderId, @RequestBody String messageText) {
-        Message message = messageService.sendMessage(conversationId, senderId, messageText);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<ApiResponse<Object>> sendMessage(@PathVariable UUID conversationId,
+                                                           @PathVariable UUID senderId,
+                                                           @RequestBody String messageText) {
+        try {
+            Message message = messageService.sendMessage(conversationId, senderId, messageText);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Mesaj başarıyla gönderildi", message));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesaj gönderilirken hata oluştu"));
+        }
     }
 
     // Mesaj okuma (isRead = true)
     @PatchMapping("/{messageId}/read")
-    public ResponseEntity<Message> markAsRead(@PathVariable UUID messageId) {
-        Message message = messageService.markAsRead(messageId);
-        return ResponseEntity.ok(message);
+    public ResponseEntity<ApiResponse<Object>> markAsRead(@PathVariable UUID messageId) {
+        try {
+            Message message = messageService.markAsRead(messageId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Mesaj okundu olarak işaretlendi", message));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesaj okuma sırasında hata oluştu"));
+        }
     }
 
     // Mesaj silme
     @DeleteMapping("/{messageId}")
-    public ResponseEntity<Void> deleteMessage(@PathVariable UUID messageId) {
-        messageService.deleteMessage(messageId);
-        return ResponseEntity.noContent().build();
+    public ResponseEntity<ApiResponse<Object>> deleteMessage(@PathVariable UUID messageId) {
+        try {
+            messageService.deleteMessage(messageId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.NO_CONTENT, "Mesaj başarıyla silindi", null));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesaj silinirken hata oluştu"));
+        }
     }
 
-    // Belirli bir konuşmadaki tüm mesajları listeleme
+    // Konuşmadaki tüm mesajları listeleme
     @GetMapping("/conversation/{conversationId}")
-    public ResponseEntity<List<Message>> getMessagesByConversationId(@PathVariable UUID conversationId) {
-        List<Message> messages = messageService.getMessagesByConversationId(conversationId);
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<ApiResponse<Object>> getMessagesByConversationId(@PathVariable UUID conversationId) {
+        try {
+            List<Message> messages = messageService.getMessagesByConversationId(conversationId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Mesajlar listelendi", messages));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesajlar getirilirken hata oluştu"));
+        }
     }
 
-    // Belirli bir konuşmadaki okunan mesajları listeleme
+    // Okunmuş mesajlar
     @GetMapping("/conversation/{conversationId}/read/{senderId}")
-    public ResponseEntity<List<Message>> getReadMessages(@PathVariable UUID conversationId, @PathVariable UUID senderId) {
-        List<Message> messages = messageService.getReadMessages(conversationId, senderId);
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<ApiResponse<Object>> getReadMessages(@PathVariable UUID conversationId, @PathVariable UUID senderId) {
+        try {
+            List<Message> messages = messageService.getReadMessages(conversationId, senderId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Okunan mesajlar listelendi", messages));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Okunan mesajlar getirilirken hata oluştu"));
+        }
     }
 
-    // Belirli bir konuşmadaki okunmamış mesajları listeleme
+    // Okunmamış mesajlar
     @GetMapping("/conversation/{conversationId}/unread/{senderId}")
-    public ResponseEntity<List<Message>> getUnreadMessages(@PathVariable UUID conversationId, @PathVariable UUID senderId) {
-        List<Message> messages = messageService.getUnreadMessages(conversationId, senderId);
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<ApiResponse<Object>> getUnreadMessages(@PathVariable UUID conversationId, @PathVariable UUID senderId) {
+        try {
+            List<Message> messages = messageService.getUnreadMessages(conversationId, senderId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Okunmamış mesajlar listelendi", messages));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Okunmamış mesajlar getirilirken hata oluştu"));
+        }
     }
 
-    // Belirli bir konuşmadaki silinen mesajları listeleme
+    // Silinen mesajlar
     @GetMapping("/conversation/{conversationId}/deleted")
-    public ResponseEntity<List<Message>> getDeletedMessages(@PathVariable UUID conversationId) {
-        List<Message> messages = messageService.getDeletedMessages(conversationId);
-        return ResponseEntity.ok(messages);
+    public ResponseEntity<ApiResponse<Object>> getDeletedMessages(@PathVariable UUID conversationId) {
+        try {
+            List<Message> messages = messageService.getDeletedMessages(conversationId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Silinen mesajlar listelendi", messages));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Silinen mesajlar getirilirken hata oluştu"));
+        }
     }
 }
