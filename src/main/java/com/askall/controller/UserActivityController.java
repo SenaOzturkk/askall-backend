@@ -1,8 +1,10 @@
 package com.askall.controller;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.UserActivity;
 import com.askall.service.UserActivityService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,29 +20,53 @@ public class UserActivityController {
 
     // Kullanıcı ID'sine göre aktiviteleri listele
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<UserActivity>> getActivitiesByUserId(@PathVariable UUID userId) {
-        List<UserActivity> activities = userActivityService.getActivitiesByUserId(userId);
-        return ResponseEntity.ok(activities);
+    public ResponseEntity<ApiResponse<Object>> getActivitiesByUserId(@PathVariable UUID userId) {
+        try {
+            List<UserActivity> activities = userActivityService.getActivitiesByUserId(userId);
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Kullanıcı aktiviteleri başarıyla getirildi", activities);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Aktiviteler alınırken bir hata oluştu");
+            return ResponseEntity.ok(response);
+        }
     }
 
     // Kullanıcı ID'sine ve aksiyona göre aktiviteleri listele
     @GetMapping("/user/{userId}/action/{action}")
-    public ResponseEntity<List<UserActivity>> getActivitiesByUserIdAndAction(@PathVariable UUID userId, @PathVariable UserActivity.Action action) {
-        List<UserActivity> activities = userActivityService.getActivitiesByUserIdAndAction(userId, action);
-        return ResponseEntity.ok(activities);
+    public ResponseEntity<ApiResponse<Object>> getActivitiesByUserIdAndAction(@PathVariable UUID userId, @PathVariable UserActivity.Action action) {
+        try {
+            List<UserActivity> activities = userActivityService.getActivitiesByUserIdAndAction(userId, action);
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Kullanıcı aksiyon aktiviteleri başarıyla getirildi", activities);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Aktivite filtreleme sırasında hata oluştu");
+            return ResponseEntity.ok(response);
+        }
     }
 
     // Entity ID'sine göre aktiviteleri listele
     @GetMapping("/entity/{entityId}")
-    public ResponseEntity<List<UserActivity>> getActivitiesByEntityId(@PathVariable UUID entityId) {
-        List<UserActivity> activities = userActivityService.getActivitiesByEntityId(entityId);
-        return ResponseEntity.ok(activities);
+    public ResponseEntity<ApiResponse<Object>> getActivitiesByEntityId(@PathVariable UUID entityId) {
+        try {
+            List<UserActivity> activities = userActivityService.getActivitiesByEntityId(entityId);
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Entity'ye ait aktiviteler başarıyla getirildi", activities);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Entity aktiviteleri alınırken hata oluştu");
+            return ResponseEntity.ok(response);
+        }
     }
 
     // Yeni bir aktivite kaydet
     @PostMapping("/save")
-    public ResponseEntity<UserActivity> saveUserActivity(@RequestBody UserActivity userActivity) {
-        UserActivity savedActivity = userActivityService.saveUserActivity(userActivity);
-        return ResponseEntity.ok(savedActivity);
+    public ResponseEntity<ApiResponse<Object>> saveUserActivity(@RequestBody UserActivity userActivity) {
+        try {
+            UserActivity savedActivity = userActivityService.saveUserActivity(userActivity);
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Aktivite başarıyla kaydedildi", savedActivity);
+            return ResponseEntity.ok(response);
+        } catch (Exception e) {
+            ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Aktivite kaydı sırasında bir hata oluştu");
+            return ResponseEntity.ok(response);
+        }
     }
 }

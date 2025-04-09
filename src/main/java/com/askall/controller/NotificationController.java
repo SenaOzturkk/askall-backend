@@ -1,7 +1,9 @@
 package com.askall.controller;
 
+import com.askall.dto.ApiResponse;
 import com.askall.modal.Notification;
 import com.askall.service.NotificationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,7 +11,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/notifications")
+@RequestMapping("/api/notifications")
 public class NotificationController {
 
     private final NotificationService notificationService;
@@ -20,33 +22,50 @@ public class NotificationController {
 
     // Kullanıcıya bildirim ekleme
     @PostMapping("/create")
-    public ResponseEntity<Notification> createNotification(@RequestParam UUID userId,
-                                                           @RequestParam UUID senderId,
-                                                           @RequestParam String notificationText,
-                                                           @RequestParam UUID entityId,
-                                                           @RequestParam Notification.EntityType entityType) {
-        Notification notification = notificationService.createNotification(userId, senderId, notificationText, entityId, entityType);
-        return ResponseEntity.ok(notification);
+    public ResponseEntity<ApiResponse<Object>> createNotification(@RequestParam UUID userId,
+                                                                  @RequestParam UUID senderId,
+                                                                  @RequestParam String notificationText,
+                                                                  @RequestParam UUID entityId,
+                                                                  @RequestParam Notification.EntityType entityType) {
+        try {
+            Notification notification = notificationService.createNotification(userId, senderId, notificationText, entityId, entityType);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.CREATED, "Bildirim başarıyla oluşturuldu", notification));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Bildirim oluşturulurken hata oluştu"));
+        }
     }
 
     // Kullanıcının tüm bildirimlerini listeleme
     @GetMapping("/{userId}")
-    public ResponseEntity<List<Notification>> getNotifications(@PathVariable UUID userId) {
-        List<Notification> notifications = notificationService.getNotifications(userId);
-        return ResponseEntity.ok(notifications);
+    public ResponseEntity<ApiResponse<Object>> getNotifications(@PathVariable UUID userId) {
+        try {
+            List<Notification> notifications = notificationService.getNotifications(userId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Bildirimler başarıyla getirildi", notifications));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Bildirimler alınırken hata oluştu"));
+        }
     }
 
     // Kullanıcının belirli bir bildirimini okuma
     @PostMapping("/{userId}/mark-read/{notificationId}")
-    public ResponseEntity<Notification> markNotificationAsRead(@PathVariable UUID userId, @PathVariable UUID notificationId) {
-        Notification notification = notificationService.markNotificationAsRead(userId, notificationId);
-        return ResponseEntity.ok(notification);
+    public ResponseEntity<ApiResponse<Object>> markNotificationAsRead(@PathVariable UUID userId,
+                                                                      @PathVariable UUID notificationId) {
+        try {
+            Notification notification = notificationService.markNotificationAsRead(userId, notificationId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Bildirim okundu olarak işaretlendi", notification));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Bildirim işaretleme sırasında hata oluştu"));
+        }
     }
 
     // Kullanıcının okunmamış bildirimlerini listeleme
     @GetMapping("/{userId}/unread")
-    public ResponseEntity<List<Notification>> getUnreadNotifications(@PathVariable UUID userId) {
-        List<Notification> unreadNotifications = notificationService.getUnreadNotifications(userId);
-        return ResponseEntity.ok(unreadNotifications);
+    public ResponseEntity<ApiResponse<Object>> getUnreadNotifications(@PathVariable UUID userId) {
+        try {
+            List<Notification> unread = notificationService.getUnreadNotifications(userId);
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Okunmamış bildirimler getirildi", unread));
+        } catch (Exception e) {
+            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Okunmamış bildirimler getirilirken hata oluştu"));
+        }
     }
 }
