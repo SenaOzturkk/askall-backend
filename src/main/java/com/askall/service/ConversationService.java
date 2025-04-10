@@ -17,7 +17,14 @@ public class ConversationService {
     }
 
     public Conversation createConversation(UUID user1Id, UUID user2Id) {
-        Optional<Conversation> existingConversation = conversationRepository.findByUser1IdAndUser2Id(user1Id, user2Id);
+        Optional<Conversation> existingConversation = conversationRepository
+                .findByUser1IdAndUser2Id(user1Id, user2Id);
+
+        if (!existingConversation.isPresent()) {
+            // Check for reversed user1Id and user2Id
+            existingConversation = conversationRepository.findByUser1IdAndUser2Id(user2Id, user1Id);
+        }
+
         if (existingConversation.isPresent()) {
             return existingConversation.get();
         }
@@ -27,6 +34,7 @@ public class ConversationService {
         conversation.setUser2Id(user2Id);
         return conversationRepository.save(conversation);
     }
+
 
     public List<Conversation> getUserConversations(UUID userId) {
         return conversationRepository.findByUser1IdOrUser2Id(userId, userId);

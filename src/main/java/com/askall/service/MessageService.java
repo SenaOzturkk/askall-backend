@@ -1,9 +1,12 @@
 package com.askall.service;
 
 import com.askall.modal.Message;
+import com.askall.modal.User;
 import com.askall.repository.MessageRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -24,18 +27,30 @@ public class MessageService {
         return messageRepository.save(message);
     }
 
-    // Mesaj okuma
     public Message markAsRead(UUID messageId) {
-        Message message = messageRepository.findById(messageId)
-                .orElseThrow(() -> new IllegalArgumentException("Message not found"));
+        Optional<Message> optionalMessage = messageRepository.findById(messageId);
+
+        if (optionalMessage.isEmpty()) {
+            return null;
+        }
+        Message message = optionalMessage.get();
         message.setIsRead(true);
         return messageRepository.save(message);
     }
 
-    // Mesajı silme
-    public void deleteMessage(UUID messageId) {
-        messageRepository.deleteByMessageId(messageId);
+
+    @Transactional
+    public Optional<Message> deleteMessage(UUID messageId) {
+        Optional<Message> optionalMessage = messageRepository.findById(messageId);
+
+        optionalMessage.ifPresent(message -> {
+            message.setIsDeleted(true);
+            messageRepository.save(message);
+        });
+
+        return optionalMessage;
     }
+
 
     // Belirli bir konuşmanın mesajlarını listeleme
     public List<Message> getMessagesByConversationId(UUID conversationId) {

@@ -14,6 +14,9 @@ public class MessageCredit {
     @Column(name = "credits", nullable = false)
     private Integer credits = 0;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     // 🟢 Getter & Setter Metotları
     public UUID getUserId() {
         return userId;
@@ -29,5 +32,13 @@ public class MessageCredit {
 
     public void setCredits(Integer credits) {
         this.credits = credits;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

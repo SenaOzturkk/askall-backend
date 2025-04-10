@@ -21,12 +21,10 @@ public class TravelController {
     }
 
     // Yeni bir seyahat kaydı oluştur
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Object>> createTravel(@RequestParam UUID userId,
-                                                            @RequestParam Double destinationLatitude,
-                                                            @RequestParam Double destinationLongitude) {
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> createTravel(@RequestBody Travel request) {
         try {
-            Travel travel = travelService.createTravel(userId, destinationLatitude, destinationLongitude);
+            Travel travel = travelService.createTravel(request.getUserId(), request.getDestinationLatitude(), request.getDestinationLongitude());
             ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Seyahat başarıyla oluşturuldu", travel);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
@@ -49,7 +47,7 @@ public class TravelController {
     }
 
     // Seyahatin durumunu güncelle
-    @PutMapping("/update-status/{travelId}")
+    @PutMapping("/{travelId}")
     public ResponseEntity<ApiResponse<Object>> updateTravelStatus(@PathVariable UUID travelId,
                                                                   @RequestParam Travel.Status status) {
         try {

@@ -24,6 +24,17 @@ public class UserPremiumStatus {
     @Column(name = "question_rights_left", nullable = false)
     private Integer questionRightsLeft = 0;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
+    public Boolean getIsDeleted() {
+        return isDeleted;
+    }
+
+    public void setIsDeleted(Boolean isDeleted) {
+        this.isDeleted = isDeleted;
+    }
+
     // Getter ve Setter metotları
 
     public UUID getUserId() {
@@ -65,4 +76,5 @@ public class UserPremiumStatus {
     public void setQuestionRightsLeft(Integer questionRightsLeft) {
         this.questionRightsLeft = questionRightsLeft;
     }
+
 }

@@ -2,14 +2,16 @@ package com.askall.controller;
 
 import com.askall.modal.Conversation;
 import com.askall.service.ConversationService;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.askall.dto.ApiResponse;
 
 import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/conversations")
+@RequestMapping("/api/conversations")
 public class ConversationController {
 
     private final ConversationService conversationService;
@@ -18,13 +20,22 @@ public class ConversationController {
         this.conversationService = conversationService;
     }
 
-    @PostMapping("/start")
-    public ResponseEntity<Conversation> startConversation(@RequestParam UUID user1Id, @RequestParam UUID user2Id) {
-        return ResponseEntity.ok(conversationService.createConversation(user1Id, user2Id));
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> startConversation(@RequestBody Conversation conversationRequest) {
+        try {
+            Conversation conversation = conversationService.createConversation(conversationRequest.getUser1Id(), conversationRequest.getUser2Id());
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.CREATED, "Conversation started successfully", conversation));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Error starting conversation"));
+        }
     }
 
+
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<Conversation>> getUserConversations(@PathVariable UUID userId) {
-        return ResponseEntity.ok(conversationService.getUserConversations(userId));
+    public ResponseEntity<ApiResponse<Object>> getUserConversations(@PathVariable UUID userId) {
+        List<Conversation> conversations = conversationService.getUserConversations(userId);
+        return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Conversations fetched successfully", conversations));
     }
+
 }

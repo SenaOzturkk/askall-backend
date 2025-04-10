@@ -29,8 +29,24 @@ public class UserActivityService {
         return userActivityRepository.findByEntityId(entityId);
     }
 
-    // Aktivite kaydet
     public UserActivity saveUserActivity(UserActivity userActivity) {
-        return userActivityRepository.save(userActivity);
+        try {
+            // Log incoming activity details
+            System.out.println("Saving activity for user: " + userActivity.getUserId());
+
+            // Ensure that action is not null
+            if (userActivity.getAction() == null) {
+                throw new IllegalArgumentException("Action cannot be null");
+            }
+
+            // Save the activity
+            return userActivityRepository.save(userActivity);
+        } catch (Exception e) {
+            // Log the error for debugging
+            System.out.println("Error occurred while saving user activity: " + e.getMessage());
+            throw new RuntimeException("Error saving user activity", e);
+        }
     }
+
+
 }

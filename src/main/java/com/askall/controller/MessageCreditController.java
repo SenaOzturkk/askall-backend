@@ -31,8 +31,7 @@ public class MessageCreditController {
         }
     }
 
-    // Kullanıcıdan kredi silme
-    @PostMapping("/{userId}/deduct/{creditsToDeduct}")
+    @PutMapping("/{userId}/deduct/{creditsToDeduct}")
     public ResponseEntity<ApiResponse<Object>> deductCredits(@PathVariable UUID userId,
                                                              @PathVariable Integer creditsToDeduct) {
         try {
@@ -42,6 +41,7 @@ public class MessageCreditController {
             return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Kredi düşme sırasında hata oluştu"));
         }
     }
+
 
     // Kullanıcıya ait kredi bilgilerini getirme
     @GetMapping("/{userId}")

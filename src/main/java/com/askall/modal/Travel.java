@@ -29,6 +29,9 @@ public class Travel {
     @Column(name = "status", nullable = false)
     private Status status = Status.PENDING;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     public enum Status {
         PENDING, APPROVED, REJECTED
     }
@@ -80,5 +83,13 @@ public class Travel {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

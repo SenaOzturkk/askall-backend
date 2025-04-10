@@ -16,6 +16,9 @@ public class AskCredit {
     @Column(name = "credits", nullable = false)
     private int credits;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     // ✅ Boş Constructor (JPA için gerekli)
     public AskCredit() {}
 
@@ -48,5 +51,13 @@ public class AskCredit {
 
     public void setCredits(int credits) {
         this.credits = credits;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }
