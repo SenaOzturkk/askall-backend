@@ -35,9 +35,13 @@ public class Notification {
     @Column(name = "created_at", updatable = false, nullable = false)
     private Instant createdAt = Instant.now();
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     public enum EntityType {
         QUESTION, ANSWER, FOLLOW, LIKE, MESSAGE
     }
+
 
     // Getter ve Setter metotları
     public UUID getNotificationId() {
@@ -102,5 +106,13 @@ public class Notification {
 
     public void setCreatedAt(Instant createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

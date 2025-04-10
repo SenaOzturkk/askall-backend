@@ -23,15 +23,15 @@ public class PremiumPurchaseController {
     }
 
     // Yeni premium satın alımı oluştur
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Object>> createPremiumPurchase(@RequestParam UUID userId,
-                                                                     @RequestParam Instant expirationDate,
-                                                                     @RequestParam BigDecimal amount,
-                                                                     @RequestParam String paymentMethod,
-                                                                     @RequestParam String purchaseType) {
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> createPremiumPurchase(@RequestBody PremiumPurchase premiumPurchaseRequest) {
         try {
             PremiumPurchase premiumPurchase = premiumPurchaseService.createPremiumPurchase(
-                    userId, expirationDate, amount, paymentMethod, purchaseType
+                    premiumPurchaseRequest.getUserId(),
+                    premiumPurchaseRequest.getExpirationDate(),
+                    premiumPurchaseRequest.getAmount(),
+                    premiumPurchaseRequest.getPaymentMethod(),
+                    premiumPurchaseRequest.getPurchaseType()
             );
             ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Premium satın alma başarılı", premiumPurchase);
             return ResponseEntity.ok(response);
@@ -40,6 +40,7 @@ public class PremiumPurchaseController {
             return ResponseEntity.ok(response);
         }
     }
+
 
     // Kullanıcıya ait tüm premium satın alımları listele
     @GetMapping("/{userId}")

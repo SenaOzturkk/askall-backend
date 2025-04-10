@@ -1,6 +1,7 @@
 package com.askall.controller;
 
 import com.askall.dto.ApiResponse;
+import com.askall.modal.User;
 import com.askall.modal.UserPremiumStatus;
 import com.askall.service.UserPremiumStatusService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class UserPremiumStatusController {
     }
 
     // Yeni bir premium durumu kaydet
-    @PostMapping("/save")
+    @PostMapping
     public ResponseEntity<ApiResponse<Object>> saveUserPremiumStatus(@RequestBody UserPremiumStatus userPremiumStatus) {
         try {
             UserPremiumStatus savedStatus = userPremiumStatusService.saveUserPremiumStatus(userPremiumStatus);
@@ -50,7 +51,7 @@ public class UserPremiumStatusController {
     }
 
     // Kullanıcı ID'sine göre premium durumu güncelle
-    @PutMapping("/update/{userId}")
+    @PutMapping("/{userId}")
     public ResponseEntity<ApiResponse<Object>> updateUserPremiumStatus(@PathVariable UUID userId, @RequestBody UserPremiumStatus userPremiumStatus) {
         try {
             UserPremiumStatus updatedStatus = userPremiumStatusService.updateUserPremiumStatus(userId, userPremiumStatus);
@@ -68,12 +69,17 @@ public class UserPremiumStatusController {
     }
 
     // Kullanıcı premium durumunu sil
-    @DeleteMapping("/delete/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<ApiResponse<Object>> deleteUserPremiumStatus(@PathVariable UUID userId) {
         try {
-            userPremiumStatusService.deleteUserPremiumStatus(userId);
-            ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Premium durumu başarıyla silindi", null);
-            return ResponseEntity.ok(response);
+            Optional<UserPremiumStatus> deletedUserPremium = userPremiumStatusService.deleteUserPremiumStatus(userId);
+            if (deletedUserPremium.isPresent()) {
+                ApiResponse<Object> response = ApiResponse.success(HttpStatus.OK, "Premium durumu başarıyla silindi", null);
+                return ResponseEntity.ok(response);
+            } else {
+                ApiResponse<Object> response = ApiResponse.error(HttpStatus.NOT_FOUND, "Premium durumu silinirken hata oluştu " + userId);
+                return ResponseEntity.ok(response);
+            }
         } catch (Exception e) {
             ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Premium durumu silinirken hata oluştu");
             return ResponseEntity.ok(response);

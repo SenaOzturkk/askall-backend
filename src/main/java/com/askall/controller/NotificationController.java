@@ -20,15 +20,16 @@ public class NotificationController {
         this.notificationService = notificationService;
     }
 
-    // Kullanıcıya bildirim ekleme
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Object>> createNotification(@RequestParam UUID userId,
-                                                                  @RequestParam UUID senderId,
-                                                                  @RequestParam String notificationText,
-                                                                  @RequestParam UUID entityId,
-                                                                  @RequestParam Notification.EntityType entityType) {
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> createNotification(@RequestBody Notification notificationRequest) {
         try {
-            Notification notification = notificationService.createNotification(userId, senderId, notificationText, entityId, entityType);
+            Notification notification = notificationService.createNotification(
+                    notificationRequest.getUserId(),
+                    notificationRequest.getSenderId(),
+                    notificationRequest.getNotificationText(),
+                    notificationRequest.getEntityId(),
+                    notificationRequest.getEntityType()
+            );
             return ResponseEntity.ok(ApiResponse.success(HttpStatus.CREATED, "Bildirim başarıyla oluşturuldu", notification));
         } catch (Exception e) {
             return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Bildirim oluşturulurken hata oluştu"));

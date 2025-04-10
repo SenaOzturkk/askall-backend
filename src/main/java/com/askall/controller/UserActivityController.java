@@ -57,10 +57,22 @@ public class UserActivityController {
         }
     }
 
-    // Yeni bir aktivite kaydet
-    @PostMapping("/save")
+
+    @PostMapping
     public ResponseEntity<ApiResponse<Object>> saveUserActivity(@RequestBody UserActivity userActivity) {
         try {
+            // Validate action
+            if (userActivity.getAction() == null) {
+                return ResponseEntity.ok(ApiResponse.error(HttpStatus.BAD_REQUEST, "Action is required"));
+            }
+
+            // Ensure that the action is valid (Enum validation)
+            try {
+                UserActivity.Action.valueOf(userActivity.getAction().name());
+            } catch (IllegalArgumentException e) {
+                return ResponseEntity.ok(ApiResponse.error(HttpStatus.BAD_REQUEST, "Invalid action value"));
+            }
+
             UserActivity savedActivity = userActivityService.saveUserActivity(userActivity);
             ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Aktivite başarıyla kaydedildi", savedActivity);
             return ResponseEntity.ok(response);
@@ -69,4 +81,5 @@ public class UserActivityController {
             return ResponseEntity.ok(response);
         }
     }
+
 }

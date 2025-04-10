@@ -2,12 +2,14 @@ package com.askall.controller;
 
 import com.askall.dto.ApiResponse;
 import com.askall.modal.Message;
+import com.askall.modal.User;
 import com.askall.service.MessageService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @RestController
@@ -38,22 +40,38 @@ public class MessageController {
     public ResponseEntity<ApiResponse<Object>> markAsRead(@PathVariable UUID messageId) {
         try {
             Message message = messageService.markAsRead(messageId);
+
+            if (message == null) {
+                return ResponseEntity
+                        .status(HttpStatus.OK)
+                        .body(ApiResponse.error(HttpStatus.NOT_FOUND, "Mesaj bulunamadı"));
+            }
+
             return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Mesaj okundu olarak işaretlendi", message));
         } catch (Exception e) {
-            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesaj okuma sırasında hata oluştu"));
+            return ResponseEntity
+                    .status(HttpStatus.OK)
+                    .body(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesaj okuma sırasında hata oluştu"));
         }
     }
 
-    // Mesaj silme
+
+
     @DeleteMapping("/{messageId}")
     public ResponseEntity<ApiResponse<Object>> deleteMessage(@PathVariable UUID messageId) {
-        try {
-            messageService.deleteMessage(messageId);
-            return ResponseEntity.ok(ApiResponse.success(HttpStatus.NO_CONTENT, "Mesaj başarıyla silindi", null));
-        } catch (Exception e) {
-            return ResponseEntity.ok(ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Mesaj silinirken hata oluştu"));
+        Optional<Message> deletedMessage = messageService.deleteMessage(messageId);
+
+        if (deletedMessage.isPresent()) {
+            return ResponseEntity.ok(
+                    ApiResponse.success(HttpStatus.OK, "Mesaj başarıyla silindi", deletedMessage.get())
+            );
+        } else {
+            return ResponseEntity.status(HttpStatus.OK)
+                    .body(ApiResponse.error(HttpStatus.NOT_FOUND, "Mesaj bulunamadı"));
         }
     }
+
+
 
     // Konuşmadaki tüm mesajları listeleme
     @GetMapping("/conversation/{conversationId}")

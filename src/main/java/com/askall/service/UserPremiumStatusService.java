@@ -1,5 +1,6 @@
 package com.askall.service;
 
+import com.askall.modal.User;
 import com.askall.modal.UserPremiumStatus;
 import com.askall.repository.UserPremiumStatusRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,8 +39,16 @@ public class UserPremiumStatusService {
         return null;
     }
 
-    // Premium durumu sil (isteğe bağlı)
-    public void deleteUserPremiumStatus(UUID userId) {
-        userPremiumStatusRepository.deleteById(userId);
+    public Optional<UserPremiumStatus> deleteUserPremiumStatus(UUID userId) {
+        Optional<UserPremiumStatus> userOpt = userPremiumStatusRepository.findByUserId(userId);
+        if (userOpt.isPresent()) {
+            UserPremiumStatus user = userOpt.get();
+            user.setIsDeleted(true);
+            userPremiumStatusRepository.save(user);
+            return Optional.of(user);
+        } else {
+            return Optional.empty();
+        }
     }
+
 }

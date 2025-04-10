@@ -1,9 +1,11 @@
 package com.askall.repository;
 
 import com.askall.modal.Message;
+import com.askall.modal.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Repository
@@ -19,5 +21,5 @@ public interface MessageRepository extends JpaRepository<Message, UUID> {
     List<Message> findByConversationIdAndIsDeleted(UUID conversationId, Boolean isDeleted);
 
     // Mesajı silme
-    void deleteByMessageId(UUID messageId);
+    Optional<Message> deleteByMessageId(UUID messageId);
 }

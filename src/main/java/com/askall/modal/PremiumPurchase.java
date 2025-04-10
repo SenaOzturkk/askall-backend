@@ -32,6 +32,9 @@ public class PremiumPurchase {
     @Column(name = "purchase_type", nullable = false, length = 50)
     private String purchaseType;
 
+    @Column(name = "is_deleted", nullable = false)
+    private Boolean isDeleted = false;
+
     // Getter ve Setter metotları
     public UUID getPurchaseId() {
         return purchaseId;
@@ -87,5 +90,13 @@ public class PremiumPurchase {
 
     public void setPurchaseType(String purchaseType) {
         this.purchaseType = purchaseType;
+    }
+
+    public Boolean getDeleted() {
+        return isDeleted;
+    }
+
+    public void setDeleted(Boolean deleted) {
+        isDeleted = deleted;
     }
 }

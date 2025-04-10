@@ -20,22 +20,30 @@ public class ReportController {
         this.reportService = reportService;
     }
 
-    // Yeni bir rapor oluştur
-    @PostMapping("/create")
-    public ResponseEntity<ApiResponse<Object>> createReport(@RequestParam UUID reporterId,
-                                                            @RequestParam UUID reportedUserId,
-                                                            @RequestParam UUID entityId,
-                                                            @RequestParam Report.EntityType entityType,
-                                                            @RequestParam String reason) {
+    @PostMapping
+    public ResponseEntity<ApiResponse<Object>> createReport(@RequestBody Report report) {
         try {
-            Report report = reportService.createReport(reporterId, reportedUserId, entityId, entityType, reason);
-            ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Rapor başarıyla oluşturuldu", report);
+            // Validate input (optional)
+            if (report.getReporterId() == null || report.getReportedUserId() == null || report.getEntityId() == null || report.getReason() == null) {
+                return ResponseEntity.ok(ApiResponse.error(HttpStatus.BAD_REQUEST, "All fields must be provided"));
+            }
+
+            Report createdReport = reportService.createReport(
+                    report.getReporterId(),
+                    report.getReportedUserId(),
+                    report.getEntityId(),
+                    report.getEntityType(),
+                    report.getReason()
+            );
+
+            ApiResponse<Object> response = ApiResponse.success(HttpStatus.CREATED, "Rapor başarıyla oluşturuldu", createdReport);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             ApiResponse<Object> response = ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "Rapor oluşturulurken hata oluştu");
             return ResponseEntity.ok(response);
         }
     }
+
 
     // Reporter tarafından yapılmış raporları listele
     @GetMapping("/by-reporter/{reporterId}")
