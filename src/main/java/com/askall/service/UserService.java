@@ -4,6 +4,8 @@ import com.askall.dto.ApiResponse;
 import com.askall.modal.Question;
 import com.askall.modal.User;
 import com.askall.repository.UserRepository;
+import com.askall.util.JwtTokenUtil;
+import com.askall.util.OtpStore;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.UUID;
 
 @Service
@@ -20,12 +23,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    private final JwtTokenUtil jwtTokenUtil;
+
     public List<User> getAllUsers() {
         return userRepository.findAll();
     }
 
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository, JwtTokenUtil jwtTokenUtil) {
         this.userRepository = userRepository;
+        this.jwtTokenUtil = jwtTokenUtil;
     }
 
     public ApiResponse<Object> createUser(User user) {
@@ -61,6 +67,38 @@ public class UserService {
     public Optional<User> getUserById(UUID userId) {
         return userRepository.findByUserId(userId);
     }
+
+
+
+    @Autowired
+    private OtpStore otpStore;
+
+    public ApiResponse<Object> initiatePhoneVerification(String phoneNumber) {
+        String otp = String.format("%06d", new Random().nextInt(999999));
+        otpStore.saveOtp(phoneNumber, otp, 5); // 5 dakika geçerli
+
+        System.out.println("OTP for " + phoneNumber + ": " + otp);
+
+        //  sendSms(phoneNumber, "AskAll OTP Kodunuz: " + otp);
+        return ApiResponse.success(HttpStatus.OK, "OTP gönderildi..", otp);
+    }
+
+    public ResponseEntity<ApiResponse<Object>> verifyPhoneNumber(String phoneNumber, String code) {
+        String storedOtp = otpStore.getOtp(phoneNumber);
+
+        if (storedOtp == null) {
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "OTP expired or invalid",null));
+        }
+
+        if (!storedOtp.equals(code)) {
+            return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Invalid OTP code", null));
+        }
+
+        otpStore.removeOtp(phoneNumber);
+        return ResponseEntity.ok(ApiResponse.success(HttpStatus.OK, "Successfully", jwtTokenUtil.generateToken(phoneNumber)));
+    }
+
+
 
 
 }
